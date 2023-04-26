@@ -1,28 +1,28 @@
 package main
 
-var subjectsMap map[DNA]Subject
+var subjectsMap map[string]Subject
 var subjectsList []Subject
 
-var teachersMap map[DNA]Teacher
+var teachersMap map[string]Teacher
 var teachersList []Teacher
 
-var lessonTypesMap map[DNA]LessonType
+var lessonTypesMap map[string]LessonType
 var lessonTypesList []LessonType
 
-var classroomsMap map[DNA]Classroom
+var classroomsMap map[string]Classroom
 var classroomsList []Classroom
 
-var groupsMap map[DNA]Group
+var groupsMap map[string]Group
 var groupsList []Group
 
-var timeSlotsMap map[DNA]Timeslot
+var timeSlotsMap map[string]Timeslot
 var timeSlotsList []Timeslot
 
-var weekDaysMap map[DNA]Weekday
+var weekDaysMap map[string]Weekday
 var weekDaysList []Weekday
 
 func initValues() {
-	subjectsMap = map[DNA]Subject{
+	subjectsMap = map[string]Subject{
 		/*00*/ "0000": {Name: "Iнформаційні технології в менеджментi"},
 		/*01*/ "0001": {Name: "Телекомунікаційні технології"},
 		/*02*/ "0010": {Name: "Вибрані розділи трудового права і основ підприємницької діяльності"},
@@ -35,7 +35,7 @@ func initValues() {
 		/*09*/ "1001": {Name: "Вступ до університетських студій"},
 		/*10*/ "1010": {Name: "Коректність програм та логіки програмування"},
 	}
-	teachersMap = map[DNA]Teacher{
+	teachersMap = map[string]Teacher{
 		/*00*/ "000": {Name: "Вергунова Ірина Миколаївна", Subjects: []Subject{subjectsMap["0000"]}},
 		/*01*/ "001": {Name: "Колєнов Сергій Олександрович", Subjects: []Subject{subjectsMap["0001"], subjectsMap["0010"], subjectsMap["0100"]}},
 		/*02*/ "010": {Name: "Нікітченко Микола Степанович", Subjects: []Subject{subjectsMap["0011"], subjectsMap["1010"]}},
@@ -44,11 +44,11 @@ func initValues() {
 		/*05*/ "101": {Name: "Федорус О.М.", Subjects: []Subject{subjectsMap["0111"]}},
 		/*06*/ "110": {Name: "Яковлев В.О.", Subjects: []Subject{subjectsMap["0111"]}},
 	}
-	lessonTypesMap = map[DNA]LessonType{
+	lessonTypesMap = map[string]LessonType{
 		/*00*/ "0": {Type: Lecture},
 		/*01*/ "1": {Type: Practice},
 	}
-	classroomsMap = map[DNA]Classroom{
+	classroomsMap = map[string]Classroom{
 		/*00*/ "000": {Name: "101", Seats: 30},
 		/*01*/ "001": {Name: "102", Seats: 30},
 		/*02*/ "010": {Name: "201", Seats: 30},
@@ -57,7 +57,7 @@ func initValues() {
 		/*05*/ "101": {Name: "02", Seats: 90},
 		/*06*/ "110": {Name: "403", Seats: 90},
 	}
-	groupsMap = map[DNA]Group{
+	groupsMap = map[string]Group{
 		/*00*/ "000": {Name: "ТК-41"},
 		/*01*/ "001": {Name: "ТК-42"},
 		/*02*/ "010": {Name: "ТТП-41"},
@@ -66,13 +66,13 @@ func initValues() {
 		/*05*/ "101": {Name: "ІПС-41"},
 		/*06*/ "110": {Name: "ІПС-42"},
 	}
-	timeSlotsMap = map[DNA]Timeslot{
+	timeSlotsMap = map[string]Timeslot{
 		"00": {Position: 1},
 		"01": {Position: 2},
 		"10": {Position: 3},
 		"11": {Position: 4},
 	}
-	weekDaysMap = map[DNA]Weekday{
+	weekDaysMap = map[string]Weekday{
 		"000": {Day: 1},
 		"001": {Day: 2},
 		"010": {Day: 3},

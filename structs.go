@@ -10,43 +10,41 @@ const (
 	Practice        = "practice"
 )
 
-type DNA string
-
 type Subject struct {
 	Name string
-	Dna  DNA
+	Dna  string
 }
 
 type Teacher struct {
 	Subjects []Subject
 	Name     string
-	Dna      DNA
+	Dna      string
 }
 
 type LessonType struct {
 	Type string
-	Dna  DNA
+	Dna  string
 }
 
 type Group struct {
 	Name string
-	Dna  DNA
+	Dna  string
 }
 
 type Weekday struct {
 	Day time.Weekday
-	Dna DNA
+	Dna string
 }
 
 type Classroom struct {
 	Name  string
 	Seats int
-	Dna   DNA
+	Dna   string
 }
 
 type Timeslot struct {
 	Position int
-	Dna      DNA
+	Dna      string
 }
 
 type LessonGene struct {

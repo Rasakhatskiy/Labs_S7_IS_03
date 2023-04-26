@@ -54,7 +54,7 @@ func fitness(chromosome string) int {
 }
 
 func CreateRandomChromosome(number int) string {
-	result := DNA("")
+	result := string("")
 
 	for i := 0; i < number; i++ {
 		subjectKey := subjectsList[randDevice.Intn(len(subjectsList))].Dna
@@ -99,31 +99,31 @@ func divideString(mystr string, size int) []string {
 }
 
 func GetLesson(chromosome string) (*LessonGene, error) {
-	subject, ok := subjectsMap[DNA(chromosome[0:4])]
+	subject, ok := subjectsMap[chromosome[0:4]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
-	teacher, ok := teachersMap[DNA(chromosome[4:7])]
+	teacher, ok := teachersMap[chromosome[4:7]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
-	lessontype, ok := lessonTypesMap[DNA(chromosome[7:8])]
+	lessontype, ok := lessonTypesMap[chromosome[7:8]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
-	classroom, ok := classroomsMap[DNA(chromosome[8:11])]
+	classroom, ok := classroomsMap[chromosome[8:11]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
-	group, ok := groupsMap[DNA(chromosome[11:14])]
+	group, ok := groupsMap[chromosome[11:14]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
-	timeSlot, ok := timeSlotsMap[DNA(chromosome[14:16])]
+	timeSlot, ok := timeSlotsMap[chromosome[14:16]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
-	weekDay, ok := weekDaysMap[DNA(chromosome[16:19])]
+	weekDay, ok := weekDaysMap[chromosome[16:19]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
