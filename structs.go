@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	Lecture  string = "lecture"
+	Lecture  string = "lecture "
 	Practice        = "practice"
 )
 
@@ -58,16 +58,41 @@ type LessonGene struct {
 	Gene       string
 }
 
+func formattedWeekDay(d int) string {
+	if d == 0 {
+		return "Неділя   "
+	}
+	if d == 1 {
+		return "Понеділок"
+	}
+	if d == 2 {
+		return "Віторок  "
+	}
+	if d == 3 {
+		return "Середа   "
+	}
+	if d == 4 {
+		return "Четвер   "
+	}
+	if d == 5 {
+		return "П'ятниця "
+	}
+	if d == 6 {
+		return "Субота   "
+	}
+	return ""
+}
+
 func (l LessonGene) String() string {
 	return fmt.Sprintf("%s %s %d %s %s %s %s %s",
 		l.Gene,
-		l.Weekday.Day,
+		formattedWeekDay(int(l.Weekday.Day)),
 		l.Timeslot.Position,
 		l.Group.Name,
-		l.LessonType,
+		l.LessonType.Type,
 		l.Classroom.Name,
 		l.Teacher.Name,
-		l.Subject)
+		l.Subject.Name)
 }
 
 type TimeTable []LessonGene

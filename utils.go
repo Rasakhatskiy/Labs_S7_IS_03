@@ -11,3 +11,15 @@ func removeDuplicate[T string | int](sliceList []T) []T {
 	}
 	return list
 }
+
+func removeDuplicateSpecies(sliceList []Species) []Species {
+	allKeys := make(map[string]bool)
+	list := []Species{}
+	for _, item := range sliceList {
+		if _, value := allKeys[item.Gene]; !value {
+			allKeys[item.Gene] = true
+			list = append(list, item)
+		}
+	}
+	return list
+}
