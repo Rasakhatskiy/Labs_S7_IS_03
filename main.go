@@ -10,51 +10,33 @@ import (
 var randDevice *rand.Rand
 
 const lessonsInTable = 16
-const starterSet = 100
+const starterSet = 1000000
 
 func main() {
 	initValues()
-
 	randDevice = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	gen0 := make([]string, starterSet)
-
 	for i := 0; i < starterSet; i++ {
-		for {
-			genChromo := CreateRandomChromosome(lessonsInTable)
-			//tt := timetableFromChromosome(genChromo, lessonsInTable)
-			//if tt.ValidateTimeSlots() {
-			gen0[i] = genChromo
-			fmt.Printf(".")
-			break
-			//}
-		}
+		gen0[i] = CreateRandomGene(lessonsInTable)
 	}
 	fmt.Println()
 
 	gen0 = removeDuplicate(gen0)
 	//fmt.Printf("Got %d unique chromosomes", len(gen0))
 
+	count := 0
 	for _, gen := range gen0 {
-		if fitness(gen) != 1 {
-			break
+		if fitness(gen) == 1 {
+			count++
+			fmt.Println()
 		}
 	}
-
+	fmt.Println("SUCC: ", count)
 }
 
-func fitness(chromosome string) int {
-	tt := timetableFromChromosome(chromosome, lessonsInTable)
-	fit := tt.ValidateTimeSlots()
-	if fit != 1 {
-		fmt.Println(tt.String())
-		return fit
-	}
-	return 1
-}
-
-func CreateRandomChromosome(number int) string {
-	result := string("")
+func CreateRandomGene(number int) string {
+	result := ""
 
 	for i := 0; i < number; i++ {
 		subjectKey := subjectsList[randDevice.Intn(len(subjectsList))].Dna
@@ -67,14 +49,14 @@ func CreateRandomChromosome(number int) string {
 
 		result += subjectKey + teacherKey + lessonTypeKey + classroomKey + groupKey + timeSlotKey + weekDayKey
 	}
-	return string(result)
+	return result
 }
 
 func timetableFromChromosome(chromosome string, n int) TimeTable {
 	chromosomes := divideString(chromosome, n)
 	timetable := TimeTable{}
 	for _, s := range chromosomes {
-		lesson, err := GetLesson(s)
+		lesson, err := lessonFromGene(s)
 		if err != nil {
 			fmt.Println(err)
 		} else {
@@ -98,32 +80,32 @@ func divideString(mystr string, size int) []string {
 	return parts
 }
 
-func GetLesson(chromosome string) (*LessonGene, error) {
-	subject, ok := subjectsMap[chromosome[0:4]]
+func lessonFromGene(gene string) (*LessonGene, error) {
+	subject, ok := subjectsMap[gene[0:4]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
-	teacher, ok := teachersMap[chromosome[4:7]]
+	teacher, ok := teachersMap[gene[4:7]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
-	lessontype, ok := lessonTypesMap[chromosome[7:8]]
+	lessontype, ok := lessonTypesMap[gene[7:8]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
-	classroom, ok := classroomsMap[chromosome[8:11]]
+	classroom, ok := classroomsMap[gene[8:11]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
-	group, ok := groupsMap[chromosome[11:14]]
+	group, ok := groupsMap[gene[11:14]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
-	timeSlot, ok := timeSlotsMap[chromosome[14:16]]
+	timeSlot, ok := timeSlotsMap[gene[14:16]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
-	weekDay, ok := weekDaysMap[chromosome[16:19]]
+	weekDay, ok := weekDaysMap[gene[16:19]]
 	if !ok {
 		return nil, errors.New("wrong dna")
 	}
@@ -136,6 +118,7 @@ func GetLesson(chromosome string) (*LessonGene, error) {
 		Group:      group,
 		Timeslot:   timeSlot,
 		Weekday:    weekDay,
+		Gene:       gene,
 	}, nil
 }
 
@@ -145,21 +128,37 @@ type ConflictingTypes struct {
 	Type      LessonType
 }
 
-func (t *TimeTable) ValidateTimeSlots() int {
-	groupAtDayAtTime := make(map[string]ConflictingTypes) // Map to keep track of which students are in each class
+type tmp struct {
+}
 
-	for _, gene := range *t {
-		stamp := gene.Group.Dna + gene.Weekday.Dna + gene.Timeslot.Dna
-		classroom, subject, lessonType := gene.Classroom, gene.Subject, gene.LessonType
+func fitness(chromosome string) int {
+	groupAtDayAtTime := make(map[string]LessonGene) // Map to keep track of which students are in each class
+	teacehrAtDayAtTime := make(map[string]LessonGene)
 
-		//for _, groupKey := range groupsKeys {
-		if val, ok := groupAtDayAtTime[stamp]; ok && val.Timeslot == timeslot && val.Weekday == weekday {
-			fmt.Println(val)
-			fmt.Println(groupAtDayAtTime)
-			return 0 // Return a fitness of 0 if the constraint is not satisfied
+	for _, gene := range divideString(chromosome, lessonsInTable) {
+		lesson, err := lessonFromGene(gene)
+		if err != nil {
+			return 0
 		}
-		groupAtDayAtTime[group.Name] = ConflictingTypes{Classroom: classroom, Timeslot: timeslot, Weekday: weekday}
-		//}
+
+		// group in two lessons at same time
+		groupDayTimeStamp := lesson.Group.Dna + lesson.Weekday.Dna + lesson.Timeslot.Dna
+		if _, ok := groupAtDayAtTime[groupDayTimeStamp]; ok {
+			return 0
+		}
+		groupAtDayAtTime[groupDayTimeStamp] = *lesson
+
+		// teacher in two lessons at same time
+		teacherDayTimeStamp := lesson.Teacher.Dna + lesson.Weekday.Dna + lesson.Timeslot.Dna
+		if _, ok := teacehrAtDayAtTime[teacherDayTimeStamp]; ok {
+			return 0
+		}
+		teacehrAtDayAtTime[teacherDayTimeStamp] = *lesson
+
+		if lesson.Classroom.Seats < 90 && lesson.LessonType.Type == Lecture {
+			return 0
+		}
+
 	}
 
 	return 1

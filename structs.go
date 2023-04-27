@@ -48,13 +48,26 @@ type Timeslot struct {
 }
 
 type LessonGene struct {
-	Subject    Subject
-	Teacher    Teacher
-	LessonType LessonType
-	Group      Group
-	Classroom  Classroom
-	Timeslot   Timeslot
-	Weekday    Weekday
+	Subject    *Subject
+	Teacher    *Teacher
+	LessonType *LessonType
+	Group      *Group
+	Classroom  *Classroom
+	Timeslot   *Timeslot
+	Weekday    *Weekday
+	Gene       string
+}
+
+func (l LessonGene) String() string {
+	return fmt.Sprintf("%s %s %d %s %s %s %s %s",
+		l.Gene,
+		l.Weekday.Day,
+		l.Timeslot.Position,
+		l.Group.Name,
+		l.LessonType,
+		l.Classroom.Name,
+		l.Teacher.Name,
+		l.Subject)
 }
 
 type TimeTable []LessonGene
